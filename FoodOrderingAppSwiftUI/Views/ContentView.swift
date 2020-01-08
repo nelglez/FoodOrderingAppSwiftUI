@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var categoriesController = CategoriesController()
+    @ObservedObject var cartController = CartController()
     @State private var show = false
     var body: some View {
         ZStack {
@@ -23,8 +24,16 @@ struct ContentView: View {
             
             if self.show {
                 GeometryReader { _ in
-                    CartView()
-                }.background(Color.black.opacity(0.55).edgesIgnoringSafeArea(.all).onTapGesture {
+                    CartView(cartController: self.cartController)
+                }.background(Color.black.opacity(0.55).edgesIgnoringSafeArea(.all).onAppear {
+                    self.cartController.cartItems.removeAll()
+                    self.cartController.startListener { (error) in
+                        if let error = error {
+                            print(error.localizedDescription)
+                            return
+                        }
+                    }
+                }.onTapGesture {
                     self.show.toggle()
                 })
             }

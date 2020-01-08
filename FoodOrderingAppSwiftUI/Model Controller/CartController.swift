@@ -44,7 +44,6 @@ class CartController: ObservableObject {
     private func onDocumentAdded(change: DocumentChange, cart: Cart) {
         let newIndex = Int(change.newIndex)
         cartItems.insert(cart, at: newIndex)
-        
     }
     
     private func onDocumentModified(change: DocumentChange, cart: Cart) {
@@ -70,6 +69,21 @@ class CartController: ObservableObject {
         
         
     }
+    
+    func updateItem(_ cart: Cart, quantity: Int) {
+        var _cart = cart
+       // _item.isPurchased.toggle()
+        _cart.quantity = quantity
+        updateItemInDB(_cart)
+    }
+    func updateItemInDB(_ cart: Cart) {
+        db.document(cart.id).updateData(Cart.modelToData(cart: cart))
+    }
+    
+    func removeItem(_ cart: Cart) {
+        db.document(cart.id).delete()
+    }
+    
     
     func stopListener() {
         listener?.remove()
